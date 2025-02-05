@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { MapPinIcon, PhoneIcon, EnvelopeIcon } from "@heroicons/react/24/solid"; // Updated import path
 import React, { useState } from "react";
@@ -31,9 +31,31 @@ export default function ContactPage() {
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Form Submitted:\n${JSON.stringify(form, null, 2)}`);
+
+    // Determine the correct API URL
+    const apiUrl =
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000/api/contact"
+        : "/api/contact";
+
+    try {
+      const res = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (res.ok) {
+        alert("Message Sent!");
+      } else {
+        alert("Failed to send message.");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("An error occurred. Please try again.");
+    }
   };
 
   return (
